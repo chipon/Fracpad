@@ -46,7 +46,6 @@ MainWindow::MainWindow(QWidget *parent) :
     currentBezierState=Bezier1;
     this->centralWidget()->setMouseTracking(true);
     this->setMouseTracking(true);
-    //QDesktopWidget* desktopWidget = QApplication::desktop();
     //QRect clientRect = desktopWidget->();    //用户可用窗口大小
     //QRect r = desktopWidget->availableGeometry();  //应用程序可用窗口大小
     //qDebug()<<(r.height()-this->statusBar()->height());
