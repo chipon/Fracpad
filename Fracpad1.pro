@@ -15,14 +15,14 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     attrdialog.cpp \
-    shape.cpp \
     bezier.cpp
 
 HEADERS  += mainwindow.h \
     attrdialog.h \
     bezier.h \
     poly.h \
-    shape.h
+    shape.h \
+    line.h
 
 FORMS    += mainwindow.ui \
     attrdialog.ui

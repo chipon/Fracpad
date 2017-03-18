@@ -60,7 +60,6 @@ MainWindow::~MainWindow()
 void MainWindow::choose_shape()
 {
     currentDrawState=Choose;
-    qDebug()<<"ok";
 }
 
 void MainWindow::draw_line()
@@ -104,7 +103,6 @@ void MainWindow::mouseMoveEvent(QMouseEvent *event)
     s+=" y=";
     s+=QString::number(event->y());
     pos->setText(s);
-    QRect rt;
     QVector<Bezier>::iterator it;
 
     switch (currentDrawState) {
