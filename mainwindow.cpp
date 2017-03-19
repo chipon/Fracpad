@@ -40,9 +40,9 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(clear,SIGNAL(triggered(bool)),this,SLOT(clear_screen()));
     ui->toolBar->addAction(clear);
 
-    flag1=flag2=flag3=flag4=false;
+    paintClicked=flag4=false;
     currentMoveState=None;
-    currentDrawState=Choose;
+    currentDrawState=Pointer;
     currentBezierState=Bezier1;
     this->centralWidget()->setMouseTracking(true);
     this->setMouseTracking(true);
@@ -59,7 +59,7 @@ MainWindow::~MainWindow()
 
 void MainWindow::choose_shape()
 {
-    currentDrawState=Choose;
+    currentDrawState=Pointer;
 }
 
 void MainWindow::draw_line()
@@ -104,9 +104,10 @@ void MainWindow::mouseMoveEvent(QMouseEvent *event)
     s+=QString::number(event->y());
     pos->setText(s);
     QVector<Bezier>::iterator it;
+    QVector<Shape>::iterator itor;
 
     switch (currentDrawState) {
-    case Choose:
+    case Pointer:
         switch (currentMoveState) {
         case Move:
             currentBezier.move(p2-p1);
@@ -115,22 +116,38 @@ void MainWindow::mouseMoveEvent(QMouseEvent *event)
         default:
             break;
         }
-        if(bezierLines.empty()) break;
-        flag4=false;
-        for(it=bezierLines.begin(),order=0;it!=bezierLines.end();it++,order++){
-            if(it->has_point(event->pos())){
-                flag4=true;
+
+        if(currentDrawState==Choose)
+            currentDrawState=None;
+        for(itor=shapes.begin(),order=0;itor!=shapes.end();itor++,order++){
+            if(itor->has_point(event->pos())){
+                currentDrawState==Choose;
+                chooseBezier=false;
                 break;
             }
         }
-        if(flag4){
+        if(currentDrawState==Choose){
             this->setCursor(Qt::DragMoveCursor);
         }else{
             this->setCursor(Qt::ArrowCursor);
         }
         break;
-    case Line:
-        if(flag1){
+
+        for(it=bezierLines.begin(),order=0;it!=bezierLines.end();it++,order++){
+            if(it->has_point(event->pos())){
+                currentDrawState==Choose;
+                chooseBezier=true;
+                break;
+            }
+        }
+        if(currentDrawState==Choose){
+            this->setCursor(Qt::DragMoveCursor);
+        }else{
+            this->setCursor(Qt::ArrowCursor);
+        }
+        break;
+    case OtherShape:
+        if(paintClicked){
             p2=event->pos();
             update();
         }
@@ -162,14 +179,15 @@ void MainWindow::mouseMoveEvent(QMouseEvent *event)
 void MainWindow::mousePressEvent(QMouseEvent *event)
 {
     switch (currentDrawState) {
-    case Choose:
-        if(!flag4) break;
-        currentMoveState=Move;
-        bezierLines[order].move(p2-p1);
-        p1=event->pos();
+    case Pointer:
+        if(currentMoveState==Choose){
+            currentMoveState=Move;
+            bezierLines[order].move(p2-p1);
+            p1=event->pos();
+        }
         break;
     case Line:
-        flag1=true;
+        paintClicked=true;
         p1=event->pos();
         break;
     case BezierCurve:
@@ -195,7 +213,7 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
 void MainWindow::mouseReleaseEvent(QMouseEvent *event)
 {
     switch (currentDrawState) {
-    case Choose:
+    case Pointer:
         if(currentBezierState!=Bezier5) break;
         p2=event->pos();
         qDebug()<<p1<<p2;
@@ -203,7 +221,7 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)
         update();
         break;
     case Line:
-        flag1=false;
+        paintClicked=false;
         lines.append(QLine(p1,p2));
         break;
     case BezierCurve:
@@ -239,7 +257,7 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
             currentBezierState=Bezier1;
             bezierLines.append(currentBezier);
             currentBezier.clear();
-            flag3=true;
+            //flag3=true;
             border=currentBezier.getBorder();
             update();
         }
@@ -277,9 +295,6 @@ void MainWindow::paintEvent(QPaintEvent *event)
     }
     for(itor=lines.begin();itor!=lines.end();++itor){
         paint.drawLine(itor->p1(),itor->p2());
-    }
-    if(flag3){
-        paint.drawRect(border);
     }
     paint.drawpol(border);
     paint.drawPath(path);

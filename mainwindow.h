@@ -36,8 +36,8 @@ private:
     Ui::MainWindow *ui;
     QLabel *pos;
     QRect border;
-    bool flag1,flag2,flag3;
-    bool flag4; //记录贝塞尔曲线是否被靠近
+    bool paintClicked;  //记录绘制图形时是否已经按下按键
+    bool chooseBezier; //记录贝塞尔曲线是否被选择
     int order;
 
     //dates
@@ -49,9 +49,9 @@ private:
     QVector<Bezier> bezierLines;
 
     //states
-    enum DrawStates{Choose,Line,BezierCurve};
+    enum DrawStates{Pointer,OtherShape,BezierCurve};
     enum BezierStates{Bezier1,Bezier2,Bezier3,Bezier4};
-    enum MoveStates{None,Move,Resize,Rotate};
+    enum MoveStates{None,Choose,Move,Resize,Rotate};
     DrawStates currentDrawState;
     MoveStates currentMoveState;
     BezierStates currentBezierState;
