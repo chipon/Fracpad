@@ -15,7 +15,7 @@ public:
     bool has_point(QPoint p);
     void move(QPoint m);
     void paint(QPainterPath &path);
-    QRect getBorder();
+    void paintBorder(QPainterPath &path);
 private:
     static Poly B1,B2,B3,B4; //Four Bezier parameter
     //parameter curve keep all curves data

@@ -35,21 +35,17 @@ private slots:
 private:
     Ui::MainWindow *ui;
     QLabel *pos;
-    QRect border;
-    bool paintClicked;  //记录绘制图形时是否已经按下按键
-    bool chooseBezier; //记录贝塞尔曲线是否被选择
-    int order;
 
     //dates
-    QPoint p1,p2,c1,c2;
-    Shape currentShape;
+    Shape *currentShape;
     Bezier currentBezier;
+    QPoint p1,p2,c1,c2,start,end;
     QVector<Shape > shapes;
-    QVector<QLine> lines;
     QVector<Bezier> bezierLines;
+    QVector<Shape *> currentChooseShapes;
 
     //states
-    enum DrawStates{Pointer,OtherShape,BezierCurve};
+    enum DrawStates{Pointer,Line,BezierCurve};
     enum BezierStates{Bezier1,Bezier2,Bezier3,Bezier4};
     enum MoveStates{None,Choose,Move,Resize,Rotate};
     DrawStates currentDrawState;

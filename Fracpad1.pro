@@ -22,7 +22,7 @@ HEADERS  += mainwindow.h \
     bezier.h \
     poly.h \
     shape.h \
-    line.h
+    myline.h
 
 FORMS    += mainwindow.ui \
     attrdialog.ui

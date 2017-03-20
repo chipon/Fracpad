@@ -71,7 +71,7 @@ void Bezier::clear(){
 }
 
 bool Bezier::has_point(QPoint p){
-    if(event->x()<minx || event->x()>maxx)
+    if(p.x()<minx || p.x()>maxx || p.y()<miny ||p.y()>maxy)
         return false;
     QVector<int> y;
     QVector<int>::iterator ity;
@@ -126,8 +126,8 @@ void Bezier::paint(QPainterPath &path){
     }
 }
 
-QRect Bezier::getBorder(){
-    return QRect(QPoint(minx,miny),QPoint(maxx,maxy));
+void Bezier::paintBorder(QPainterPath &path){
+    path.addRect(QRect(QPoint(minx,miny),QPoint(maxx,maxy)));
 }
 
 void Bezier::get_zero_point(Poly &p,QVector<int> &extreme){
