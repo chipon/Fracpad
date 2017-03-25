@@ -14,10 +14,10 @@ public:
     }
     Poly(int a1,int a2,int a3,int a4){
         c=new int(4);
-        a[0]=a1;
-        a[1]=a2;
-        a[2]=a3;
-        a[3]=a4;
+        c[0]=a1;
+        c[1]=a2;
+        c[2]=a3;
+        c[3]=a4;
     }
 
     Poly(int power,int ratio[]) {

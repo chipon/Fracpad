@@ -38,11 +38,10 @@ private:
 
     //dates
     Shape *currentShape;
-    Bezier currentBezier;
+    Bezier *currentBezier;
     QPoint p1,p2,c1,c2,start,end;
-    QVector<Shape > shapes;
-    QVector<Bezier> bezierLines;
-    QVector<Shape *> currentChooseShapes;
+    QVector<Shape *> shapes,currentChooseShapes;
+    QVector<Bezier *> bezierLines;
 
     //states
     enum DrawStates{Pointer,Line,BezierCurve};
