@@ -41,6 +41,8 @@ MainWindow::MainWindow(QWidget *parent) :
     connect(clear,SIGNAL(triggered(bool)),this,SLOT(clear_screen()));
     ui->toolBar->addAction(clear);
 
+    currentBezier=nullptr;
+    currentShape=nullptr;
     currentMoveState=None;
     currentDrawState=Pointer;
     currentBezierState=Bezier1;
@@ -91,7 +93,7 @@ void MainWindow::clear_screen()
 //{
 //    AttrDialog ad(this);
 //    ad.exec();
-//    ui->label->setText(ad.getValue());
+//    //ui->label->setText(ad.getValue());
 //    //qDebug()<<ad.getValue();
 //    //qDebug("%s",qPrintable(ad.getValue()));
 //}
@@ -113,19 +115,19 @@ void MainWindow::mouseMoveEvent(QMouseEvent *event)
         case None:
             foreach (p, shapes) {
                 if(p->has_point(event->pos())){
-                    currentDrawState==Choose;
+                    currentMoveState=Choose;
                     currentShape=p;
                     break;
                 }
             }
             foreach (b, bezierLines) {
                 if(b->has_point(event->pos())){
-                    currentDrawState==Choose;
+                    currentMoveState=Choose;
                     currentShape=b;
                     break;
                 }
             }
-            if(currentDrawState==Choose){
+            if(currentMoveState==Choose){
                 this->setCursor(Qt::DragMoveCursor);
             }else{
                 this->setCursor(Qt::ArrowCursor);
@@ -160,8 +162,10 @@ void MainWindow::mouseMoveEvent(QMouseEvent *event)
             break;
         }
     }else{
-        currentShape->setPoint(event->pos());
-        update();
+        if(currentShape!=nullptr){
+            currentShape->set_end_point(event->pos());
+            update();
+        }
     }
 }
 
@@ -177,10 +181,12 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
         }
         break;
     case Line:
-        currentShape=new Myline(event->pos());
+        if(currentShape==nullptr)
+            currentShape=new Myline(event->pos());
         break;
     case BezierCurve:
-        currentBezier=new Bezier();
+        if(currentBezier==nullptr)
+            currentBezier=new Bezier();
         switch (currentBezierState) {
         case Bezier1:
             p1=c1=event->pos();
@@ -213,13 +219,13 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)
         default:
             currentChooseShapes.append(currentShape);
             update();
-
         }
         //qDebug()<<p1<<p2;
         break;
     case Line:
-        currentShape->setPoint(p2);
+        currentShape->set_end_point(event->pos());
         shapes.append(currentShape);
+        currentShape=nullptr;
         break;
     case BezierCurve:
         switch (currentBezierState) {
@@ -253,7 +259,8 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
         if(event->key()==Qt::Key_Escape){
             currentBezierState=Bezier1;
             bezierLines.append(currentBezier);
-            currentBezier->clear();
+            //currentBezier->clear();
+            currentBezier=nullptr;
             update();
         }
     }
@@ -264,7 +271,8 @@ void MainWindow::paintEvent(QPaintEvent *event)
     QPainter paint(this);
     paint.setRenderHint(QPainter::Antialiasing);
     QPainterPath path;
-    currentBezier->paint(path);
+    if(currentBezier!=nullptr)
+        currentBezier->paint(path);
     Shape *p,*b;
     QVector<Shape *>::iterator it1;
     QVector<Bezier *>::iterator it2;
@@ -287,14 +295,14 @@ void MainWindow::paintEvent(QPaintEvent *event)
         default:
             break;
         }
-    }else{
+    }else if(currentShape!=nullptr){
         currentShape->paint(path);
     }
     foreach (p, shapes) {
         p->paint(path);
     }
     foreach (b, bezierLines) {
-        p->paint(path);
+        b->paint(path);
     }
     paint.drawPath(path);
 }

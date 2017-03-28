@@ -6,6 +6,11 @@
 class Myline:public Shape
 {
 public:
+//    virtual void setPoint(QPoint end)=0;
+//    virtual bool has_point(QPoint p)=0;
+//    virtual void move(QPoint m)=0;
+//    virtual void paint(QPainterPath &path)=0;
+//    virtual void paintBorder(QPainterPath &path)=0;
     Myline(QPoint start){
         p2=p1=start;
     }
@@ -18,7 +23,7 @@ public:
         return false;
     }
 
-    void setPoint(QPoint end){
+    void set_end_point(QPoint end){
         p2=end;
     }
 
@@ -36,17 +41,15 @@ public:
         path.lineTo(p2);
     }
 
-    void save(QDataStream &dataStream){
+//    void save(QDataStream &dataStream){
 
-    }
+//    }
 
-    void load(QDataStream &dataStream){
+//    void load(QDataStream &dataStream){
 
-    }
+//    }
 
     //virtual void edit_point(QPoint p0,QPoint p1);
-    //friend QDataStream & operator << (QDataStream &dataStream, Shape &base);
-    //friend QDataStream & operator >> (QDataStream &dataStream, Shape &base);
 private:
     QPoint p1,p2;
 };

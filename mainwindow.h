@@ -27,7 +27,7 @@ signals:
 //    void MousePressed();
 //    void mouseReleased();
 private slots:
-    //void on_pushButton_clicked();
+//    void on_pushButton_clicked();
     void choose_shape();
     void draw_line();
     void draw_Bezier();

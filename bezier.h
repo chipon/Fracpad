@@ -9,6 +9,11 @@
 class Bezier:public Shape
 {
 public:
+//    virtual void setPoint(QPoint end)=0;
+//    virtual bool has_point(QPoint p)=0;
+//    virtual void move(QPoint m)=0;
+//    virtual void paint(QPainterPath &path)=0;
+//    virtual void paintBorder(QPainterPath &path)=0;
     Bezier();
     void append(QPoint p2,QPoint c2);
     void clear();
