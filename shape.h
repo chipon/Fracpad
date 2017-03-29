@@ -4,7 +4,8 @@
 #include <QRect>
 #include <QPainterPath>
 #include <QDataStream>
-class Shape//:public QObject
+
+class Shape:public QObject
 {
 public:
     virtual void set_end_point(QPoint end){}
@@ -12,34 +13,13 @@ public:
     virtual void move(QPoint m)=0;
     virtual void paint(QPainterPath &path)=0;
     virtual void paintBorder(QPainterPath &path)=0;
-    virtual void save(QDataStream &dataStream);
-    virtual void load(QDataStream &dataStream);
-    virtual void edit_point(QPoint p0,QPoint p1);
-    friend QDataStream & operator << (QDataStream &dataStream, Shape &base){
-        dataStream << QString(base.metaObject()->className());//将对象的类名写入流中
-        base.save(dataStream);
-        return dataStream;
-    }
+    virtual void save(QDataStream &out)=0;
+    virtual void load(QDataStream &in)=0;
+    //virtual void edit_point(QPoint p0,QPoint p1)=0;
 
-    friend QDataStream & operator >> (QDataStream &dataStream, Shape &base){
-        QString str;
-        dataStream >> str;
-        *base = NULL;
-//        if (str == QString("CKDrawLine"))   //根据类名字符串生成相应类的对象
-//        {
-//            *drawBase = new CKDrawLine;
-//            (*drawBase)->load(dataStream);
-//            return dataStream;
-//        }
-
-//        if (str == QString("CKDrawRectangle"))
-//        {
-//            *drawBase = new CKDrawRectangle;
-//            (*drawBase)->load(dataStream);
-//            return dataStream;
-//        }
-        return dataStream;
-    }
+    //from http://blog.csdn.net/freezgw1985/article/details/5511600
+    friend QDataStream & operator << (QDataStream &dataStream, Shape &base);
+    friend QDataStream & operator >> (QDataStream &dataStream, Shape **base);
 };
 
 #endif // SHAPE_H

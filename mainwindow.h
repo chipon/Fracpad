@@ -52,7 +52,6 @@ private:
     BezierStates currentBezierState;
 
     QAction *drawLine,*drawBezier,*toPointer,*clear;
-    //QPainterPath path;
 
 protected:
     void paintEvent(QPaintEvent *event);

@@ -214,11 +214,12 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)
         switch (currentMoveState) {
         case Move:
             currentShape->move(end-start);
+            currentChooseShapes.append(currentShape);
+            currentMoveState=None;
             update();
             break;
         default:
-            currentChooseShapes.append(currentShape);
-            update();
+            break;
         }
         //qDebug()<<p1<<p2;
         break;

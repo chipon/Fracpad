@@ -15,7 +15,9 @@ TEMPLATE = app
 SOURCES += main.cpp\
         mainwindow.cpp \
     attrdialog.cpp \
-    bezier.cpp
+    bezier.cpp \
+    myline.cpp \
+    shape.cpp
 
 HEADERS  += mainwindow.h \
     attrdialog.h \

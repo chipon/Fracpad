@@ -18,6 +18,27 @@ Bezier::Bezier(){
     B4=Poly(3,a);
 }
 
+void Bezier::save(QDataStream &out){
+    QVector<QLine>::iterator it;
+    out<<curve.size();
+    for(it=curve.begin();it!=curve.end();it++){
+        out<<it->p1().x()<<it->p1().y()<<it->p2().x()<<it->p2().y();
+    }
+}
+
+void Bezier::load(QDataStream &in){
+    QLine line;
+    int count,x,y;
+    in>>count;
+    for(int i=0;i<count;++i){
+        in>>x>>y;//<<line.p1.y()<<line.p2.x()<<line.p2.y();
+        line.setP1(QPoint(x,y));
+        in>>x>>y;//<<line.p1.y()<<line.p2.x()<<line.p2.y();
+        line.setP2(QPoint(x,y));
+        curve.append(line);
+    }
+}
+
 void Bezier::append(QPoint p2,QPoint c2){
     if(curve.empty()){
         maxx=minx=p2.x();
@@ -81,7 +102,7 @@ bool Bezier::has_point(QPoint p){
     QVector<double>::iterator itu;
     Poly xu,yu;
     for(it=border.begin(),itor=curve.begin();it!=border.end();it++){
-        if(p.x()>it->left() && p.x()<it->right()){
+        if(it->contains(p)){
             p1=itor->p1();
             c1=itor->p2();
             itor++;
