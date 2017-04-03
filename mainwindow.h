@@ -37,9 +37,9 @@ private:
     QLabel *pos;
 
     //dates
-    Shape *currentShape;
     Bezier *currentBezier;
     QPoint p1,p2,c1,c2,start,end;
+    Shape *currentShape,*currentChooseShape;
     QVector<Shape *> shapes,currentChooseShapes;
     QVector<Bezier *> bezierLines;
 

@@ -3,7 +3,9 @@
 #include <QPoint>
 #include <QDataStream>
 #include <shape.h>
-#define EPS_LINE 4
+#define EPS_LINE 1100
+#define EPS_VERTICAL 3
+#define EPS_HORIZON 3
 
 class Myline:public Shape
 {
@@ -25,6 +27,7 @@ public:
     //virtual void edit_point(QPoint p0,QPoint p1);
 private:
     QPoint p1,p2;
+    bool f1,f2; //accelerate checking whether the point is closed to the line
 };
 
 #endif // LINE_H

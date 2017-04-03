@@ -43,6 +43,7 @@ MainWindow::MainWindow(QWidget *parent) :
 
     currentBezier=nullptr;
     currentShape=nullptr;
+    currentChooseShape=nullptr;
     currentMoveState=None;
     currentDrawState=Pointer;
     currentBezierState=Bezier1;
@@ -116,14 +117,14 @@ void MainWindow::mouseMoveEvent(QMouseEvent *event)
             foreach (p, shapes) {
                 if(p->has_point(event->pos())){
                     currentMoveState=Choose;
-                    currentShape=p;
+                    currentChooseShape=p;
                     break;
                 }
             }
             foreach (b, bezierLines) {
                 if(b->has_point(event->pos())){
                     currentMoveState=Choose;
-                    currentShape=b;
+                    currentChooseShape=b;
                     break;
                 }
             }
@@ -175,7 +176,10 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
     case Pointer:
         if(currentMoveState==None){
             currentChooseShapes.clear();
+            update();
         }else if(currentMoveState==Choose){
+            currentChooseShapes.clear();
+            currentChooseShapes.append(currentChooseShape);
             currentMoveState=Move;
             start=event->pos();
         }
@@ -208,13 +212,15 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
 
 void MainWindow::mouseReleaseEvent(QMouseEvent *event)
 {
+    Shape *p;
     switch (currentDrawState) {
     case Pointer:
         end=event->pos();
         switch (currentMoveState) {
         case Move:
-            currentShape->move(end-start);
-            currentChooseShapes.append(currentShape);
+            foreach (p, currentChooseShapes) {
+                p->move(end-start);
+            }
             currentMoveState=None;
             update();
             break;
@@ -260,7 +266,6 @@ void MainWindow::keyPressEvent(QKeyEvent *event)
         if(event->key()==Qt::Key_Escape){
             currentBezierState=Bezier1;
             bezierLines.append(currentBezier);
-            //currentBezier->clear();
             currentBezier=nullptr;
             update();
         }

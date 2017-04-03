@@ -131,6 +131,10 @@ void Bezier::move(QPoint m){
         it->setP1(it->p1()+m);
         it->setP2(it->p2()+m);
     }
+    minx+=m.x();
+    maxx+=m.x();
+    miny+=m.y();
+    maxy+=m.y();
 }
 
 void Bezier::paint(QPainterPath &path){
