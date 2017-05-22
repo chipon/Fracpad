@@ -1,6 +1,7 @@
 #include "bezier.h"
-#include <QtMath>
 #include <QtDebug>
+#include <QtMath>
+#include <QPainterPath>
 
 Poly Bezier::B1=Poly(1,-3,3,-1);
 Poly Bezier::B2=Poly(0,-3,-6,3);
@@ -46,6 +47,7 @@ void Bezier::append(QPoint p2,QPoint c2){
         curve.append(QLine(p2,c2));
         return;
     }
+    int maxx1,minx1,maxy1,miny1;
     QVector<int> extremeX,extremeY;
     QVector<int>::iterator it;
     extremeX.append(p2.x());
@@ -58,16 +60,6 @@ void Bezier::append(QPoint p2,QPoint c2){
     get_zero_point(x,extremeX);
     get_zero_point(y,extremeY);
 
-    for(it=extremeX.begin();it!=extremeX.end();it++){
-        maxx=qMax(maxx,*it);
-        minx=qMin(minx,*it);
-    }
-    for(it=extremeY.begin();it!=extremeY.end();it++){
-        maxy=qMax(maxy,*it);
-        miny=qMin(miny,*it);
-    }
-
-    int maxx1,minx1,maxy1,miny1;
     maxx1=minx1=p1.x();
     maxy1=miny1=p1.y();
     for(it=extremeX.begin();it!=extremeX.end();it++){
@@ -92,7 +84,7 @@ void Bezier::clear(){
 }
 
 bool Bezier::has_point(QPoint p){
-    if(p.x()<minx || p.x()>maxx || p.y()<miny ||p.y()>maxy)
+    if(p.x()<minx || p.x()>maxx || p.y()<miny || p.y()>maxy)
         return false;
     QVector<int> y;
     QVector<int>::iterator ity;
@@ -115,9 +107,11 @@ bool Bezier::has_point(QPoint p){
                 if((*itu)>=0 && (*itu)<=1)
                     y.append((int)(yu.value(*itu)));
             }
-        }
+        }else
+            itor++;
     }
     for(ity=y.begin();ity!=y.end();ity++){
+        //qDebug()<<p.y()<<(*ity);
         if(abs((*ity)-p.y())<close_bezier_pcs){
             return true;
         }
@@ -127,6 +121,7 @@ bool Bezier::has_point(QPoint p){
 
 void Bezier::move(QPoint m){
     QVector<QLine>::iterator it;
+    QVector<QRect>::iterator itor;
     for(it=curve.begin();it!=curve.end();it++){
         it->setP1(it->p1()+m);
         it->setP2(it->p2()+m);
@@ -135,9 +130,13 @@ void Bezier::move(QPoint m){
     maxx+=m.x();
     miny+=m.y();
     maxy+=m.y();
+    for(itor=border.begin();itor!=border.end();itor++){
+        itor->moveTo(itor->topLeft()+m);
+    }
 }
 
-void Bezier::paint(QPainterPath &path){
+void Bezier::paint(QPainter &paint){
+    QPainterPath path;
     QVector<QLine>::iterator it;
     if(curve.size()>=2){
         for(it=curve.begin();;){
@@ -149,10 +148,16 @@ void Bezier::paint(QPainterPath &path){
             path.cubicTo(c1,it->p2(),it->p1());
         }
     }
+    paint.drawPath(path);
 }
 
-void Bezier::paintBorder(QPainterPath &path){
-    path.addRect(QRect(QPoint(minx,miny),QPoint(maxx,maxy)));
+QRect Bezier::getBorder(){
+    return QRect(QPoint(minx,miny),QPoint(maxx,maxy));
+}
+
+int Bezier::close_corner(QPoint p)
+{
+
 }
 
 void Bezier::get_zero_point(Poly &p,QVector<int> &extreme){
@@ -227,5 +232,49 @@ void Bezier::get_root(Poly &p,QVector<double>& root){
         root.append(x1);
         root.append(x2);
         root.append(x3);
+    }
+}
+
+void Bezier::resize(QPoint axis, QPoint mov)
+{
+    double sx=1+mov.x()/(float)(maxx-minx);
+    double sy=1+mov.y()/(float)(maxy-miny);
+    af.resize(axis,sx,sy);
+    updateData();
+}
+
+void Bezier::rotate(QPoint axis, QPoint start, QPoint end)
+{
+//    this->pre_rotate(axis,start,end);
+//    updateData();
+}
+
+void Bezier::shear(bool direction, int ref, double sh)
+{
+//    this->pre_shear(direction,ref,sh);
+//    updateData();
+}
+
+void Bezier::updateData()
+{
+    QPoint p1(minx,miny);
+    QPoint p2(maxx,maxy);
+    QVector<QLine>::iterator it;
+    QVector<QRect>::iterator itor;
+    for(it=curve.begin();it!=curve.end();it++){
+        (*it).setP1(af.getPos(it->p1()));
+        (*it).setP2(af.getPos(it->p2()));
+    }
+    p1=af.getPos(p1);
+    p2=af.getPos(p2);
+    minx=p1.x();
+    miny=p1.y();
+    maxx=p2.x();
+    maxy=p2.y();
+    for(itor=border.begin();itor!=border.end();itor++){
+        p1=itor->topLeft();
+        p2=itor->bottomRight();
+        itor->setTopLeft(af.getPos(p1));
+        itor->setBottomRight(af.getPos(p2));
     }
 }

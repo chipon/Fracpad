@@ -23,20 +23,23 @@ void Myline::set_end_point(QPoint end){
     p2=end;
     f1=qAbs(p1.x()-p2.x())<EPS_HORIZON;
     f2=qAbs(p1.y()-p2.y())<EPS_VERTICAL;
+    QPoint topLeft=QPoint(qMin(p1.x(),p2.x()),qMin(p1.y(),p2.y()));
+    QPoint buttomRight=QPoint(qMax(p1.x(),p2.x()),qMax(p1.y(),p2.y()));
+    border=QRect(topLeft,buttomRight);
 }
 
 void Myline::move(QPoint m){
     p1+=m;
     p2+=m;
+    border.moveTo(border.topLeft()+m);
 }
 
-void Myline::paintBorder(QPainterPath &path){
-    path.addRect(QRect(p1,p2));
+QRect Myline::getBorder(){
+    return border;
 }
 
-void Myline::paint(QPainterPath &path){
-    path.moveTo(p1);
-    path.lineTo(p2);
+void Myline::paint(QPainter &paint){
+    paint.drawLine(p1,p2);
 }
 
 void Myline::save(QDataStream &out){
@@ -53,4 +56,33 @@ void Myline::load(QDataStream &in){
     f2=qAbs(p1.y()-p2.y())<EPS_VERTICAL;
 }
 
+void Myline::resize(QPoint axis, QPoint mov)
+{
+    double sx=1+mov.x()/(double)(border.width());
+    double sy=1+mov.y()/(double)(border.height());
+    af.resize(axis,sx,sy);
+//    this->pre_resize(axis,mov);
+    updateData();
+}
+
+void Myline::rotate(QPoint axis, QPoint start, QPoint end)
+{
+ //   this->pre_rotate(axis,start,end);
+    //updateData();
+}
+
+void Myline::shear(bool direction, int ref, double sh)
+{
+//    this->pre_shear(direction,ref,sh);
+    //updateData();
+}
+
+void Myline::updateData()
+{
+    p1=af.getPos(p1);
+    p2=af.getPos(p2);
+    QPoint topLeft=QPoint(qMin(p1.x(),p2.x()),qMin(p1.y(),p2.y()));
+    QPoint buttomRight=QPoint(qMax(p1.x(),p2.x()),qMax(p1.y(),p2.y()));
+    border=QRect(topLeft,buttomRight);
+}
 //virtual void edit_point(QPoint p0,QPoint p1);

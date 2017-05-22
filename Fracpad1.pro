@@ -17,14 +17,18 @@ SOURCES += main.cpp\
     attrdialog.cpp \
     bezier.cpp \
     myline.cpp \
-    shape.cpp
+    shape.cpp \
+    multishapes.cpp \
+    affine.cpp
 
 HEADERS  += mainwindow.h \
     attrdialog.h \
     bezier.h \
     poly.h \
     shape.h \
-    myline.h
+    myline.h \
+    multishapes.h \
+    affine.h
 
 FORMS    += mainwindow.ui \
     attrdialog.ui

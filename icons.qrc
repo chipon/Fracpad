@@ -4,5 +4,9 @@
         <file>icons/Bezier_Curve.ico</file>
         <file>icons/pointer.ico</file>
         <file>icons/clear.ico</file>
+        <file>icons/Anti-clockwise.png</file>
+        <file>icons/Clockwise.png</file>
+        <file>icons/resizeFDiag.png</file>
+        <file>icons/resizeBDiag.png</file>
     </qresource>
 </RCC>

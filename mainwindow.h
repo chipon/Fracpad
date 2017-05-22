@@ -5,10 +5,15 @@
 #include <QLabel>
 #include <QPoint>
 #include <QLine>
+#include <QPalette>
+#include <QComboBox>
+#include <QLineEdit>
 #include <QStateMachine>
 #include <QState>
 #include <bezier.h>
 #include <shape.h>
+#include <multishapes.h>
+#define RECT_SIZE 8
 
 namespace Ui {
 class MainWindow;
@@ -37,22 +42,31 @@ private:
     QLabel *pos;
 
     //dates
+    QRect border;
+    int closeBorder;    //determine which corner the mouse is closing
     Bezier *currentBezier;
-    QPoint p1,p2,c1,c2,start,end;
+    QPoint p1,p2,c1,c2,p3,p4,start,end;   //keep the temporary data
     Shape *currentShape,*currentChooseShape;
-    QVector<Shape *> shapes,currentChooseShapes;
+    Multishapes currentChooseShapes;
+    QVector<Shape *> shapes;
     QVector<Bezier *> bezierLines;
 
     //states
+    enum ChooseStates{Unchoose,ResizeChoose,RotateChoose};
     enum DrawStates{Pointer,Line,BezierCurve};
     enum BezierStates{Bezier1,Bezier2,Bezier3,Bezier4};
-    enum MoveStates{None,Choose,Move,Resize,Rotate};
+    enum MoveStates{None,Close,Move,Choose1,Choose2,Escape1,Escape2,Resize,Shear,Rotate};
     DrawStates currentDrawState;
     MoveStates currentMoveState;
+    ChooseStates currentChooseState;
     BezierStates currentBezierState;
 
     QAction *drawLine,*drawBezier,*toPointer,*clear;
+    QComboBox *cbMode;
+    QLineEdit *iterTimes;
+    QLabel *label;
 
+    int getClosePosition(QPoint p);
 protected:
     void paintEvent(QPaintEvent *event);
     void mouseMoveEvent(QMouseEvent *event);

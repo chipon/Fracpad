@@ -3,6 +3,7 @@
 #include <QPoint>
 #include <QDataStream>
 #include <shape.h>
+#include <affine.h>
 #define EPS_LINE 1100
 #define EPS_VERTICAL 3
 #define EPS_HORIZON 3
@@ -20,12 +21,19 @@ public:
     bool has_point(QPoint p);
     void set_end_point(QPoint end);
     void move(QPoint m);
-    void paintBorder(QPainterPath &path);
-    void paint(QPainterPath &path);
+    QRect getBorder();
+    void paint(QPainter &paint);
     void save(QDataStream &out);
     void load(QDataStream &in);
+
+    void resize(QPoint axis, QPoint mov);
+    void rotate(QPoint axis, QPoint start, QPoint end);
+    void shear(bool direction, int ref, double sh);
+    void updateData();
     //virtual void edit_point(QPoint p0,QPoint p1);
 private:
+    Affine af;
+    QRect border;
     QPoint p1,p2;
     bool f1,f2; //accelerate checking whether the point is closed to the line
 };
