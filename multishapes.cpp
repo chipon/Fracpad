@@ -95,14 +95,18 @@ void Multishapes::resize(QPoint axis, QPoint mov)
 
 void Multishapes::rotate(QPoint axis, QPoint start, QPoint end)
 {
-//    this->pre_rotate(axis,start,end);
-//    updateData();
+    for(it=shapes.begin();it!=shapes.end();it++){
+        (*it)->rotate(axis,start,end);
+    }
+    updateData();
 }
 
 void Multishapes::shear(bool direction, int ref, double sh)
 {
-//    this->pre_shear(direction,ref,sh);
-//    updateData();
+    for(it=shapes.begin();it!=shapes.end();it++){
+        (*it)->shear(direction,ref,sh);
+    }
+    updateData();
 }
 
 void Multishapes::updateData()

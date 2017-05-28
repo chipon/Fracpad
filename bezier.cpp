@@ -245,14 +245,16 @@ void Bezier::resize(QPoint axis, QPoint mov)
 
 void Bezier::rotate(QPoint axis, QPoint start, QPoint end)
 {
-//    this->pre_rotate(axis,start,end);
-//    updateData();
+    double theta1=qAtan2(start.x()-axis.x(),start.y()-axis.y());
+    double theta2=qAtan2(end.x()-axis.x(),end.y()-axis.y());
+    af.rotate(axis,theta2-theta1);
+    updateData();
 }
 
 void Bezier::shear(bool direction, int ref, double sh)
 {
-//    this->pre_shear(direction,ref,sh);
-//    updateData();
+    af.shear(direction,ref,sh);
+    updateData();
 }
 
 void Bezier::updateData()

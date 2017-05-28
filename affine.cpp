@@ -7,6 +7,13 @@ Affine::Affine()
     b[0]=b[1]=0;
 }
 
+void Affine::reset()
+{
+    a[0]=a[3]=1;
+    a[1]=a[2]=0;
+    b[0]=b[1]=0;
+}
+
 //void Affine::move(QPoint m)
 //{
 //    double a[4]={1,0,0,1};
@@ -33,29 +40,29 @@ void Affine::rotate(QPoint axis, double theta)
 {
     int x0=axis.x(),y0=axis.y();
     double sin=qSin(theta),cos=qCos(theta);
-    double a[4]={cos,-sin,sin,cos};
-    double b[2]={x0+y0*sin-x0*cos,y0-x0*sin-y0*cos};
+    a[0]=cos; a[1]=-sin; a[2]=sin; a[3]=cos;
+    b[0]=x0+y0*sin-x0*cos;
+    b[1]=y0-x0*sin-y0*cos;
 }
 
 void Affine::shear(bool direction, int ref, double sh)
 {
-    double a[4]={1,0,0,1};
-    double b[2]={0,0};
-    if(direction){
+    this->reset();
+    if(direction){  //x axis
         a[1]=sh;
         b[0]=-sh*ref;
-    }else{
+    }else{  //y axis
         a[2]=sh;
         b[1]=-sh*ref;
     }
 }
 
-//void Affine::compound(double c[],double d[])
-//{
-//    a[0]=c[0]*a[0]+c[1]*a[2];
-//    a[1]=c[0]*a[1]+c[1]*a[3];
-//    a[2]=c[2]*a[0]+c[3]*a[2];
-//    a[3]=c[2]*a[1]+c[3]*a[3];
-//    b[0]=c[0]*b[0]+c[1]*b[1]+d[0];
-//    b[1]=c[2]*b[0]+c[3]*b[1]+d[1];
-//}
+void Affine::compound(double c[],double d[])
+{
+    a[0]=c[0]*a[0]+c[1]*a[2];
+    a[1]=c[0]*a[1]+c[1]*a[3];
+    a[2]=c[2]*a[0]+c[3]*a[2];
+    a[3]=c[2]*a[1]+c[3]*a[3];
+    b[0]=c[0]*b[0]+c[1]*b[1]+d[0];
+    b[1]=c[2]*b[0]+c[3]*b[1]+d[1];
+}

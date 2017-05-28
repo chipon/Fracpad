@@ -7,6 +7,7 @@ class Affine
 public:
     Affine();
     //void move(QPoint m);
+    void reset();
     QPoint getPos(QPoint p);
     //void rotate(QPoint axis,double angle);
     void resize(QPoint axis, double sx, double sy);
@@ -16,7 +17,7 @@ public:
 public:
     double a[4];
     double b[2];
-    //void compound(double c[], double d[]);
+    void compound(double c[], double d[]);
 };
 
 #endif // AFFINE_H

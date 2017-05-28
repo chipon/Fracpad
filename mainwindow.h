@@ -55,7 +55,7 @@ private:
     enum ChooseStates{Unchoose,ResizeChoose,RotateChoose};
     enum DrawStates{Pointer,Line,BezierCurve};
     enum BezierStates{Bezier1,Bezier2,Bezier3,Bezier4};
-    enum MoveStates{None,Close,Move,Choose1,Choose2,Escape1,Escape2,Resize,Shear,Rotate};
+    enum MoveStates{None,Close1,Close2,Move,Choose1,Choose2,Escape1,Escape2,Resize,Shear,Rotate,MoveCenter};
     DrawStates currentDrawState;
     MoveStates currentMoveState;
     ChooseStates currentChooseState;

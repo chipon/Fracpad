@@ -181,28 +181,28 @@ void MainWindow::mouseMoveEvent(QMouseEvent *event)
     pos->setText(s);
     Shape *p;
     Bezier *b;
-    QPoint axis,mov;
+    QPoint axis,move;
 
     if(currentDrawState==Pointer){
         switch (currentMoveState) {
-        case Close:
+        case Close1:
             currentMoveState=None;
         case None:
             foreach (p, shapes) {
                 if(p->has_point(event->pos())){
-                    currentMoveState=Close;
+                    currentMoveState=Close1;
                     currentChooseShape=p;
                     break;
                 }
             }
             foreach (b, bezierLines) {
                 if(b->has_point(event->pos())){
-                    currentMoveState=Close;
+                    currentMoveState=Close1;
                     currentChooseShape=b;
                     break;
                 }
             }
-            if(currentMoveState==Close){
+            if(currentMoveState==Close1){
                 this->setCursor(Qt::DragMoveCursor);
             }else{
                 this->setCursor(Qt::ArrowCursor);
@@ -246,9 +246,22 @@ void MainWindow::mouseMoveEvent(QMouseEvent *event)
             }
             break;
         case Escape2:
-            if(currentChooseShapes.has_point(event->pos())){
-                currentMoveState=Choose2;
-                this->setCursor(Qt::DragMoveCursor);
+            if((closeBorder=getClosePosition(event->pos()))>=0){
+                if(closeBorder==0 || closeBorder==3)
+                    this->setCursor(Qt::SizeBDiagCursor);
+                else if(closeBorder==1 || closeBorder==2)
+                    this->setCursor(Qt::SizeFDiagCursor);
+                else if(closeBorder==4 || closeBorder==5)
+                    this->setCursor(Qt::SizeHorCursor);
+                else
+                    this->setCursor(Qt::SizeVerCursor);
+            }else{
+                if(currentChooseShapes.has_point(event->pos())){
+                    currentMoveState=Choose2;
+                    this->setCursor(Qt::DragMoveCursor);
+                }else{
+                    this->setCursor(Qt::ArrowCursor);
+                }
             }
             break;
         case Resize:
@@ -288,6 +301,28 @@ void MainWindow::mouseMoveEvent(QMouseEvent *event)
             update();
             start=event->pos();
             break;
+        case Rotate:
+            axis=border.center();
+            end=event->pos();
+            currentChooseShapes.rotate(axis,start,end);
+            update();
+            start=end;
+            break;
+        case Shear:
+            axis=border.center();
+            end=event->pos();
+            if(closeBorder==4){
+                currentChooseShapes.shear(true,axis.y(),(end.x()-start.x())/(double)(border.top()-axis.y()));
+            }else if(closeBorder==5){
+                currentChooseShapes.shear(true,axis.y(),(end.x()-start.x())/(double)(border.bottom()-axis.y()));
+            }else if(closeBorder==6){
+                currentChooseShapes.shear(false,axis.x(),(end.y()-start.y())/(double)(border.left()-axis.x()));
+            }else{
+                currentChooseShapes.shear(false,axis.x(),(end.y()-start.y())/(double)(border.right()-axis.x()));
+            }
+            update();
+            start=end;
+            break;
         default:
             break;
         }
@@ -320,7 +355,7 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
 {
     switch (currentDrawState) {
     case Pointer:
-        if(currentMoveState==Close){
+        if(currentMoveState==Close1){
             currentChooseShapes.clear();
             currentChooseShapes.append(currentChooseShape);
             currentMoveState=Move;
@@ -337,6 +372,7 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
             if(closeBorder<0){  //空白处单击...
                 currentChooseShapes.clear();
                 currentMoveState=None;
+                currentChooseState=Unchoose;
                 update();
             }else{
                 currentMoveState=Resize;
@@ -346,9 +382,13 @@ void MainWindow::mousePressEvent(QMouseEvent *event)
             if(closeBorder<0){  //空白处单击...
                 currentChooseShapes.clear();
                 currentMoveState=None;
+                currentChooseState=Unchoose;
                 update();
+            }else if(closeBorder<4){
+                currentMoveState=Rotate;
+                start=event->pos();
             }else{
-                currentMoveState=Resize;
+                currentMoveState=Shear;
                 start=event->pos();
             }
         }
@@ -406,7 +446,12 @@ void MainWindow::mouseReleaseEvent(QMouseEvent *event)
             this->setCursor(Qt::ArrowCursor);
             break;
         case Rotate:
-            //
+            currentMoveState=Escape2;
+            this->setCursor(Qt::ArrowCursor);
+            break;
+        case Shear:
+            currentMoveState=Escape2;
+            this->setCursor(Qt::ArrowCursor);
             break;
         default:
             break;
@@ -493,6 +538,10 @@ void MainWindow::paintEvent(QPaintEvent *event)
         border.adjust(-RECT_SIZE/2,-RECT_SIZE/2,RECT_SIZE/2,RECT_SIZE/2);
         paint.drawRect(border);
         paint.setPen(QPen(Qt::SolidLine));
+
+        if(currentMoveState==Escape2){
+            //
+        }
     }else if(currentDrawState==BezierCurve){
         switch (currentBezierState) {
         case Bezier4:

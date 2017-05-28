@@ -67,14 +67,19 @@ void Myline::resize(QPoint axis, QPoint mov)
 
 void Myline::rotate(QPoint axis, QPoint start, QPoint end)
 {
- //   this->pre_rotate(axis,start,end);
-    //updateData();
+    double theta1=qAtan2(start.x()-axis.x(),axis.y()-start.y());
+    double theta2=qAtan2(end.x()-axis.x(),axis.y()-end.y());
+    //qDebug()<<theta2<<theta1;
+    af.rotate(axis,theta2-theta1);
+    //qDebug()<<af.a[0]<<af.a[1]<<af.a[2]<<af.a[3]<<af.b[0]<<af.b[1];
+    updateData();
 }
 
 void Myline::shear(bool direction, int ref, double sh)
 {
-//    this->pre_shear(direction,ref,sh);
-    //updateData();
+    //qDebug()<<af.a[0]<<af.a[1]<<af.a[2]<<af.a[3]<<af.b[0]<<af.b[1];
+    af.shear(direction,ref,sh);
+    updateData();
 }
 
 void Myline::updateData()
