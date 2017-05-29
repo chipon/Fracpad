@@ -24,6 +24,7 @@ public:
     //direction=true:row shear;direcion=false:column shear
     void shear(bool direction, int ref, double sh);
     void updateData();
+    void setCenter(QPoint c);
 //    virtual void set_end_point(QPoint end){}
 //    virtual bool has_point(QPoint p)=0;
 //    virtual void move(QPoint m)=0;
@@ -32,7 +33,7 @@ public:
 //    virtual void save(QDataStream &out)=0;
 //    virtual void load(QDataStream &in)=0;
 private:
-    Affine af;
+    //Affine af;
     QRect border;
     QVector<Shape *> shapes;
     QVector<Shape *>::iterator it;

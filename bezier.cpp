@@ -75,6 +75,8 @@ void Bezier::append(QPoint p2,QPoint c2){
     minx=qMin(minx,minx1);
     maxy=qMax(maxy,maxy1);
     miny=qMin(miny,miny1);
+    center.setX((minx+maxx)/2);
+    center.setY((miny+maxy)/2);
 
     curve.append(QLine(p2,c2));
 }
@@ -130,6 +132,8 @@ void Bezier::move(QPoint m){
     maxx+=m.x();
     miny+=m.y();
     maxy+=m.y();
+    center.setX((minx+maxx)/2);
+    center.setY((miny+maxy)/2);
     for(itor=border.begin();itor!=border.end();itor++){
         itor->moveTo(itor->topLeft()+m);
     }
@@ -237,21 +241,23 @@ void Bezier::get_root(Poly &p,QVector<double>& root){
 
 void Bezier::resize(QPoint axis, QPoint mov)
 {
-    double sx=1+mov.x()/(float)(maxx-minx);
-    double sy=1+mov.y()/(float)(maxy-miny);
+    double sx=1+mov.x()/(double)(maxx-minx);
+    double sy=1+mov.y()/(double)(maxy-miny);
     af.resize(axis,sx,sy);
     updateData();
 }
 
-void Bezier::rotate(QPoint axis, QPoint start, QPoint end)
+void Bezier::rotate(QPoint axis,QPoint start, QPoint end)
 {
-    double theta1=qAtan2(start.x()-axis.x(),start.y()-axis.y());
-    double theta2=qAtan2(end.x()-axis.x(),end.y()-axis.y());
+    double theta1=qAtan2(start.x()-axis.x(),axis.y()-start.y());
+    double theta2=qAtan2(end.x()-axis.x(),axis.y()-end.y());
+//    double theta1=qAtan2(start.x()-axis.x(),start.y()-axis.y());
+//    double theta2=qAtan2(end.x()-axis.x(),end.y()-axis.y());
     af.rotate(axis,theta2-theta1);
     updateData();
 }
 
-void Bezier::shear(bool direction, int ref, double sh)
+void Bezier::shear(bool direction,int ref,double sh)
 {
     af.shear(direction,ref,sh);
     updateData();
@@ -273,10 +279,13 @@ void Bezier::updateData()
     miny=p1.y();
     maxx=p2.x();
     maxy=p2.y();
+    center.setX((minx+maxx)/2);
+    center.setY((miny+maxy)/2);
     for(itor=border.begin();itor!=border.end();itor++){
         p1=itor->topLeft();
         p2=itor->bottomRight();
         itor->setTopLeft(af.getPos(p1));
         itor->setBottomRight(af.getPos(p2));
     }
+    center=af.getPos(center);
 }

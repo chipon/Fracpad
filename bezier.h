@@ -25,7 +25,7 @@ public:
     void rotate(QPoint axis, QPoint start, QPoint end);
     void shear(bool direction, int ref, double sh);
 private:
-    Affine af;
+    //Affine af;
     static Poly B1,B2,B3,B4; //Four Bezier parameter
     //parameter curve keep all curves data
     //each element include a position point and a control point

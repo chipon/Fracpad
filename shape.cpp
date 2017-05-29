@@ -50,3 +50,18 @@ QDataStream & operator >> (QDataStream &dataStream, Shape **base){
 //    af.shear(direction,ref,sh);
 //    this->updateData();
 //}
+
+QPoint Shape::getCenter()
+{
+    return center;
+}
+
+void Shape::setCenter(QPoint c)
+{
+    center=c;
+}
+
+void Shape::movCenter(QPoint c)
+{
+    center+=c;
+}

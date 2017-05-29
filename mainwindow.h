@@ -14,6 +14,7 @@
 #include <shape.h>
 #include <multishapes.h>
 #define RECT_SIZE 8
+#define CENT_SIZE 8
 
 namespace Ui {
 class MainWindow;
@@ -45,7 +46,7 @@ private:
     QRect border;
     int closeBorder;    //determine which corner the mouse is closing
     Bezier *currentBezier;
-    QPoint p1,p2,c1,c2,p3,p4,start,end;   //keep the temporary data
+    QPoint p1,p2,c1,c2,p3,p4,start,end,center;   //keep the temporary data
     Shape *currentShape,*currentChooseShape;
     Multishapes currentChooseShapes;
     QVector<Shape *> shapes;
@@ -66,6 +67,8 @@ private:
     QLineEdit *iterTimes;
     QLabel *label;
 
+    void paintBorder(QPainter &paint, QRect &border);
+    void paintCenter(QPainter &p, QPoint &center);
     int getClosePosition(QPoint p);
 protected:
     void paintEvent(QPaintEvent *event);

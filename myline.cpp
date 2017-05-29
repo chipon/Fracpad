@@ -5,7 +5,7 @@
 Myline::Myline(){}
 
 Myline::Myline(QPoint start){
-    p2=p1=start;
+    p2=p1=center=start;
 }
 
 bool Myline::has_point(QPoint p){
@@ -26,12 +26,14 @@ void Myline::set_end_point(QPoint end){
     QPoint topLeft=QPoint(qMin(p1.x(),p2.x()),qMin(p1.y(),p2.y()));
     QPoint buttomRight=QPoint(qMax(p1.x(),p2.x()),qMax(p1.y(),p2.y()));
     border=QRect(topLeft,buttomRight);
+    center=border.center();
 }
 
 void Myline::move(QPoint m){
     p1+=m;
     p2+=m;
     border.moveTo(border.topLeft()+m);
+    center=border.center();
 }
 
 QRect Myline::getBorder(){
@@ -65,7 +67,7 @@ void Myline::resize(QPoint axis, QPoint mov)
     updateData();
 }
 
-void Myline::rotate(QPoint axis, QPoint start, QPoint end)
+void Myline::rotate(QPoint axis,QPoint start, QPoint end)
 {
     double theta1=qAtan2(start.x()-axis.x(),axis.y()-start.y());
     double theta2=qAtan2(end.x()-axis.x(),axis.y()-end.y());
@@ -89,5 +91,6 @@ void Myline::updateData()
     QPoint topLeft=QPoint(qMin(p1.x(),p2.x()),qMin(p1.y(),p2.y()));
     QPoint buttomRight=QPoint(qMax(p1.x(),p2.x()),qMax(p1.y(),p2.y()));
     border=QRect(topLeft,buttomRight);
+    center=af.getPos(center);
 }
 //virtual void edit_point(QPoint p0,QPoint p1);

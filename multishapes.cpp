@@ -1,5 +1,6 @@
 #include "multishapes.h"
 #include <QDebug>
+#include <QtMath>
 void Multishapes::append(Shape *s)
 {
     if(shapes.empty())
@@ -8,6 +9,7 @@ void Multishapes::append(Shape *s)
         border=border.united(s->getBorder());
     }
     shapes.append(s);
+    center=border.center();
 }
 
 bool Multishapes::has_point(QPoint p)
@@ -26,6 +28,7 @@ void Multishapes::move(QPoint m)
         (*it)->move(m);
     }
     border.moveTo(border.topLeft()+m);
+    center=border.center();
 }
 
 void Multishapes::paint(QPainter &paint)
@@ -86,6 +89,9 @@ void Multishapes::split(QVector<Shape *> &v, int index)
 
 void Multishapes::resize(QPoint axis, QPoint mov)
 {
+    double sx=1+mov.x()/(double)(border.width());
+    double sy=1+mov.y()/(double)(border.height());
+    af.resize(axis,sx,sy);
     for(it=shapes.begin();it!=shapes.end();it++){
         (*it)->resize(axis,mov);
     }
@@ -93,8 +99,12 @@ void Multishapes::resize(QPoint axis, QPoint mov)
     updateData();
 }
 
-void Multishapes::rotate(QPoint axis, QPoint start, QPoint end)
+void Multishapes::rotate(QPoint axis,QPoint start, QPoint end)
 {
+    double theta1=qAtan2(start.x()-axis.x(),axis.y()-start.y());
+    double theta2=qAtan2(end.x()-axis.x(),axis.y()-end.y());
+    //qDebug()<<theta2<<theta1;
+    af.rotate(axis,theta2-theta1);
     for(it=shapes.begin();it!=shapes.end();it++){
         (*it)->rotate(axis,start,end);
     }
@@ -103,6 +113,7 @@ void Multishapes::rotate(QPoint axis, QPoint start, QPoint end)
 
 void Multishapes::shear(bool direction, int ref, double sh)
 {
+    af.shear(direction,ref,sh);
     for(it=shapes.begin();it!=shapes.end();it++){
         (*it)->shear(direction,ref,sh);
     }
@@ -115,5 +126,14 @@ void Multishapes::updateData()
     border=(*it)->getBorder();
     for(it++;it!=shapes.end();it++){
         border=border.united((*it)->getBorder());
+    }
+    center=af.getPos(center);
+}
+
+void Multishapes::setCenter(QPoint c)
+{
+    center=c;
+    for(it=shapes.begin();it!=shapes.end();it++){
+        (*it)->setCenter(center);
     }
 }

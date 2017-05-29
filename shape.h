@@ -5,7 +5,6 @@
 #include <affine.h>
 #include <QPainter>
 #include <QDataStream>
-#define CORNER_EPS 0.1
 
 class Shape:public QObject
 {
@@ -20,11 +19,14 @@ public:
 
     virtual void updateData()=0;
     virtual void resize(QPoint axis, QPoint mov)=0;
-    virtual void rotate(QPoint axis, QPoint start, QPoint end)=0;
+    virtual void rotate(QPoint axis,QPoint start, QPoint end)=0;
     //direction=true:row shear;direcion=false:column shear
     virtual void shear(bool direction, int ref, double sh)=0;
     //virtual void edit_point(QPoint p0,QPoint p1)=0;
 
+    QPoint getCenter();
+    void setCenter(QPoint c);
+    void movCenter(QPoint c);
 //    void pre_resize(QPoint axis, QPoint mov);
 //    void pre_rotate(QPoint axis, QPoint start, QPoint end);
 //    //direction=true:row shear;direcion=false:column shear
@@ -34,7 +36,8 @@ public:
     friend QDataStream & operator << (QDataStream &dataStream, Shape &base);
     friend QDataStream & operator >> (QDataStream &dataStream, Shape **base);
 protected:
-//    Affine af;
+    Affine af;
+    QPoint center;
 };
 
 #endif // SHAPE_H
